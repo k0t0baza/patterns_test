@@ -1,0 +1,120 @@
+@startuml OrderManage
+
+interface OrderProcessor {
+    +process_order(order)
+}
+
+class WebsiteOrderProcessor {
+    +process_order(order)
+}
+
+class MobileAppOrderProcessor {
+    +process_order(order)
+}
+
+interface PaymentFormat {
+    +pay(amount)
+}
+
+class CreditCardPayment {
+    +pay(amount)
+}
+
+class PayPalPayment {
+    +pay(amount)
+}
+
+class CashOnDeliveryPayment {
+    +pay(amount)
+}
+
+interface Logger {
+    +log(message)
+}
+
+class ConsoleLogger {
+    +log(message)
+}
+
+class FileLogger {
+    +log(message)
+    -_filename
+}
+
+class SuperConsoleLogger {
+    +log(message)
+}
+
+interface NotificationObserver {
+    +update(message)
+}
+
+class EmailNotification {
+    +update(message)
+}
+
+class SMSNotification {
+    +update(message)
+}
+
+class PushNotification {
+    +update(message)
+}
+
+class OrderNotifier {
+    +add_observer(observer)
+    +remove_observer(observer)
+    +notify_observers(message)
+    -_observers
+}
+
+interface OrderProcessingFactory {
+    +create_order_processor()
+    +create_payment_strategy()
+}
+
+class WebsiteOrderProcessingFactory {
+    +create_order_processor()
+    +create_payment_strategy()
+}
+
+class MobileAppOrderProcessingFactory {
+    +create_order_processor()
+    +create_payment_strategy()
+}
+
+class OrderManager {
+    +add_notification_method(notification_method)
+    +remove_notification_method(notification_method)
+    +process_order(order, payment_amount)
+    -_factory
+    -_logger
+    -_notifier
+}
+
+OrderProcessor <|.. WebsiteOrderProcessor
+OrderProcessor <|.. MobileAppOrderProcessor
+PaymentFormat <|.. CreditCardPayment
+PaymentFormat <|.. PayPalPayment
+PaymentFormat <|.. CashOnDeliveryPayment
+Logger <|.. ConsoleLogger
+Logger <|.. FileLogger
+Logger <|.. SuperConsoleLogger
+NotificationObserver <|.. EmailNotification
+NotificationObserver <|.. SMSNotification
+NotificationObserver <|.. PushNotification
+OrderProcessingFactory <|.. WebsiteOrderProcessingFactory
+OrderProcessingFactory <|.. MobileAppOrderProcessingFactory
+
+OrderNotifier o-- NotificationObserver
+OrderManager *-- OrderProcessingFactory
+OrderManager *-- Logger
+OrderManager *-- OrderNotifier
+
+WebsiteOrderProcessingFactory o-- WebsiteOrderProcessor
+WebsiteOrderProcessingFactory o-- CreditCardPayment
+
+MobileAppOrderProcessingFactory o-- MobileAppOrderProcessor
+MobileAppOrderProcessingFactory o-- PayPalPayment
+
+@enduml
